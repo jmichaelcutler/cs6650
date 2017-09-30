@@ -37,6 +37,12 @@ public class ThreadClient {
             numThreads = DEFAULT_THREAD_NUM;
             numIter = DEFAULT_ITER_NUM;
         }
+        WebClient client;
+        if(args.length == 4) {
+            client = new WebClient(args[2], args[3]);
+        } else {
+            client = new WebClient();
+        }
         System.out.println("Number of threads: " + numThreads);
         System.out.println("Number of iterations per thread: " + numIter);
 
@@ -44,7 +50,7 @@ public class ThreadClient {
 
         List<MyTask> threadList = new ArrayList<>();
         for (int i = 0; i < numThreads; i++) {
-            threadList.add(new MyTask(numIter, args));
+            threadList.add(new MyTask(numIter, client));
         }
 
         long start = System.currentTimeMillis();

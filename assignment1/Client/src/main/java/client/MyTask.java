@@ -5,8 +5,7 @@
  */
 package client;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,13 +21,9 @@ public class MyTask extends ThreadClient implements Callable<Map<Long, Long>>{
     private static final long NUM_REQUESTS_INDEX = -1;
     private static final long NUM_SUCCESSES_INDEX = -2;
 
-    public MyTask(int numIter, String[] args) {
-        if(args.length == 4) {
-            client = new WebClient(args[2], args[3]);
-        } else {
-            client = new WebClient();
-        }
+    public MyTask(int numIter, WebClient client) {
         this.numIter = numIter;
+        this.client = client;
     }
 
     @Override
