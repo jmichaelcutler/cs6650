@@ -14,7 +14,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * @author jmich
+ * This program creates a given number of threads (default 10), each sending a GET and POST request to the server a
+ * given number of times (default 100 iterations, default server IP: 52.40.166.203 default port: 8080). It waits until
+ * all threads have finished their work, then collects, computes,  and outputs statistics about server latency.
  */
 public class ThreadClient {
     private static final int DEFAULT_THREAD_NUM = 10;
@@ -59,9 +61,6 @@ public class ThreadClient {
         double wallTime = ((double) (stop - start)) / 1000;
         System.out.println("Wall time: " + wallTime + " seconds");
         List<Long> latencies = statCalc.calculateLatencies(futureList);
-        for(Long latency : latencies) {
-            System.out.println(latency.toString());
-        }
 
         System.out.println("Number of requests sent to server: " + numAttempt);
         System.out.println("Number of successful requests: " + numSuccess);
@@ -70,8 +69,5 @@ public class ThreadClient {
         System.out.println("Median latency: " + statCalc.calculateNthPercentile(latencies, 0.5) + " ms");
         System.out.println("95th percentile: " + statCalc.calculateNthPercentile(latencies, .95) + " ms");
         System.out.println("99th percentile: " + statCalc.calculateNthPercentile(latencies, .99) + " ms");
-
-
-
     }
 }
