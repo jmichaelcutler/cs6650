@@ -5,4 +5,5 @@
 /Server/lib
 /Client/target
 *.iml
-
+*.dpf
+/Server/target
