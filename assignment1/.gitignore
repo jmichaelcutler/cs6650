@@ -1,0 +1,8 @@
+/Client/.idea/*
+/Server/.idea/*
+.gitignore
+/Client/lib
+/Server/lib
+/Client/target
+/Client/*.iml
+/Server/*.iml
