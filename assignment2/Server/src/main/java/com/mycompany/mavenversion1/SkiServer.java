@@ -13,15 +13,17 @@ import javax.ws.rs.core.MediaType;
 @Path("ski_server")
 public class SkiServer {
     @GET
+    @Path("/myvert/")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getStatus() {
+    public String getStats() {
         return "received";
     }
 
     @POST
+    @Path("/load/")
     @Consumes(MediaType.TEXT_PLAIN)
 
-    public int postText(String content) {
+    public int loadStats(String content) {
         return content.length();
     }
 }
