@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mycompany</groupId>
-    <artifactId>mavenVersion1</artifactId>
+    <artifactId>assignment2server</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>mavenVersion1</name>
+    <name>assignment2server</name>
 
     <build>
-        <finalName>mavenVersion1</finalName>
+        <finalName>assignment2server</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
