@@ -4,32 +4,44 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class StatsCalculator extends ThreadClient {
-    private static final long ATTEMPT_KEY = -1;
-    private static final long SUCCESS_KEY = -2;
+class StatsCalculator {
+    private static final int NUM_ATTEMPTS_FLAG = 1;
+    private static final int NUM_SUCCESS_FLAG = 2;
 
-    StatsCalculator() {
-    }
-
-    long calculateCount(List<Future<Map<Long, Long>>> futures, long key) throws ExecutionException, InterruptedException {
+    long calculateCount(List<Future<List<PostResult>>> futures, int flag) throws ExecutionException, InterruptedException {
         long result = 0;
-        for(Future<Map<Long, Long>> future : futures) {
-            result += future.get().get(key);
+        for(Future<List<PostResult>> future : futures) {
+            List<PostResult> postResults = future.get();
+            if(flag == NUM_ATTEMPTS_FLAG) {
+                result += postResults.size();
+            } else if (flag == NUM_SUCCESS_FLAG) {
+                for(PostResult postResult : postResults) {
+                    if(postResult.getSuccess()) {
+                        result++;
+                    }
+                }
+            }
         }
         return result;
     }
 
-    List<Long> calculateLatencies(List<Future<Map<Long, Long>>> futures) throws ExecutionException, InterruptedException {
+    List<Long> calculateLatencies(List<Future<List<PostResult>>> futures) throws ExecutionException, InterruptedException {
         List<Long> latencyList = new ArrayList<>();
-        for(Future<Map<Long, Long>> future : futures) {
-            Map<Long, Long> currentMap = future.get();
-            for(long key : currentMap.keySet()) {
-                if(key != ATTEMPT_KEY && key != SUCCESS_KEY) {
-                    Long latency = currentMap.get(key) - key;
-                    latencyList.add(latency);
-                }
+        for(Future<List<PostResult>> future : futures) {
+            List<PostResult> results = future.get();
+            for(PostResult result : results) {
+                latencyList.add(result.getLatency());
             }
         }
+//        for(Future<Map<Long, Long>> future : futures) {
+//            Map<Long, Long> currentMap = future.get();
+//            for(long key : currentMap.keySet()) {
+//                if(key != ATTEMPT_KEY && key != SUCCESS_KEY) {
+//                    Long latency = currentMap.get(key) - key;
+//                    latencyList.add(latency);
+//                }
+//            }
+//        }
         Collections.sort(latencyList);
         return latencyList;
     }

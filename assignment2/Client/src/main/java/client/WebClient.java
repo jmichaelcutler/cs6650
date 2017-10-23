@@ -22,25 +22,18 @@ import javax.ws.rs.core.MediaType;
  *
  * @author jmich
  */
-public class WebClient extends ThreadClient {
+public class WebClient extends MainClient {
     private final WebTarget webTarget;
     private final Client client;
 
-    private static final String BASE_URI = "http://52.40.166.203:8080/mavenVersion1/webapi";
-
-    WebClient() {
+    WebClient(String uri, String endpoint) {
         client = ClientBuilder.newClient();
-        webTarget = client.target(BASE_URI).path("myresource");
+        webTarget = client.target(uri).path(endpoint);
     }
 
-    WebClient(String host, String port) {
-        client = ClientBuilder.newClient();
-        String URI = "http://" + host + ":" + port + "/mavenVersion1/webapi/";
-        webTarget = client.target(URI).path("myresource");
-    }
-
-    <T> T postText(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        return webTarget.request(MediaType.TEXT_PLAIN).post(Entity.entity(requestEntity, MediaType.TEXT_PLAIN), responseType);
+    <T> T postData(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+        return webTarget.request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON), responseType);
     }
 
     String getStatus() throws ClientErrorException {
