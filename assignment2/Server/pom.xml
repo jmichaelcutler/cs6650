@@ -7,7 +7,7 @@
     <artifactId>assignment2server</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>assignment2server</name>
+    <name>mavenVersion1</name>
 
     <build>
         <finalName>assignment2server</finalName>
@@ -48,12 +48,11 @@
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
         </dependency>
-        <!-- uncomment this to get JSON support
+
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-binding</artifactId>
         </dependency>
-        -->
     </dependencies>
     <properties>
         <jersey.version>2.26</jersey.version>
