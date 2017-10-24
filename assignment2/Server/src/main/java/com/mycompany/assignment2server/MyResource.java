@@ -1,6 +1,8 @@
 package com.mycompany.assignment2server;
 
 import bsdsass2testdata.RFIDLiftData;
+import com.google.gson.Gson;
+import db.DatabaseManager;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,11 +21,13 @@ public class MyResource {
      * Retrieves representation of an instance of server.ServerResource
      * @return an instance of java.lang.String
      */
-    @GET
-    @Path("myvert")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getStatus() {
-        return "alive";
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String myVert(GetRequest request) {
+        DatabaseManager dbmanager = DatabaseManager.createDBClient();
+        UserStat result = dbmanager.getFromDB(request.getSkierId(), request.getDayId());
+        return new Gson().toJson(result);
     }
 
     /**
@@ -31,11 +35,18 @@ public class MyResource {
      * @param liftData representation for the resource
      * @return Length of content
      */
-    @Path("load")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    
     public int postData(RFIDLiftData liftData) {
+        if(liftData == null) {
+            return 400;
+        }
+        DatabaseManager dbmanager = DatabaseManager.createDBClient();
+        if(liftData.getSkierID() < 0) {
+            dbmanager.process(liftData.getDayNum());
+        } else {
+            dbmanager.postToDB(liftData);
+        }
         return 200;
     }
 }
