@@ -32,8 +32,8 @@ public class WebClient extends MainClient {
     }
 
     <T> T load(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        return webTarget.request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(requestEntity,MediaType.APPLICATION_JSON), responseType);
+        return webTarget.request(MediaType.TEXT_PLAIN)
+                .post(Entity.entity(requestEntity, MediaType.TEXT_PLAIN), responseType);
     }
 
     String getStatus() throws ClientErrorException {

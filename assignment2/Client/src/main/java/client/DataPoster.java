@@ -15,10 +15,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 class DataPoster {
+    private String uri;
     private int numThreads;
     private int numIter;
     private String fileName;
-    private WebClient client;
     private List<RFIDLiftData> liftDataIn;
 
     private static final int DEFAULT_THREAD_NUM = 10;
@@ -26,14 +26,13 @@ class DataPoster {
     private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String WORKING_DIRECTORY = System.getProperty("user.dir");
     private static final String DEFAULT_SOURCE_FILE = "BSDSAssignment2Day1.ser";
-    private static final String DEFAULT_URI = "http://52.40.166.203:8080/webapi/";
-    private static final String PATH = "/webapi";
-    private static final String ENDPOINT = "assignment2server";
+    private static final String DEFAULT_URI = "http://52.40.166.203:8080";
+    private static final String PATH = "/mavenVersion1/webapi";
+    private static final String ENDPOINT = "assignment2server/load";
     private static final int NUM_ATTEMPTS_FLAG = 1;
     private static final int NUM_SUCCESS_FLAG = 2;
 
     DataPoster(String[] args) {
-        String uri;
         if (args.length >= 2) {
             numThreads = Integer.valueOf(args[0]);
             numIter = Integer.valueOf(args[1]);
@@ -44,9 +43,9 @@ class DataPoster {
         if (args.length >= 4) {
             uri = "http://" + args[2] + ":" + args[3] + PATH;
         } else {
-            uri = DEFAULT_URI;
+            uri = DEFAULT_URI + PATH;
         }
-        client = new WebClient(uri, ENDPOINT);
+//        client = new WebClient(uri, ENDPOINT);
         if (args.length == 5) {
             fileName = args[4];
         } else {
@@ -64,13 +63,13 @@ class DataPoster {
             liftDataIn = Collections.synchronizedList(liftDataIn);
         }
         System.out.println("Number of threads: " + numThreads);
-        System.out.println("Number of iterations per thread: " + numIter);
+        System.out.println("Number of iterations per thread: " + (liftDataIn.size() / numThreads));
 
         ExecutorService executor = Executors.newFixedThreadPool(numThreads + 1);
 
         List<PostTask> postThreadList = new ArrayList<>();
         for (int i = 0; i < numThreads; i++) {
-            postThreadList.add(new PostTask(i, numThreads, liftDataIn, client));
+            postThreadList.add(new PostTask(i, numThreads, liftDataIn, uri, ENDPOINT));
         }
 
         long start = System.currentTimeMillis();
@@ -80,7 +79,6 @@ class DataPoster {
         long stop = System.currentTimeMillis();
         System.out.println("Posting lift data complete. Time: " + stop);
         executor.shutdown();
-        client.close();
         outputResults(futurePostList, start, stop);
     }
 
