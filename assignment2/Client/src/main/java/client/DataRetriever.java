@@ -9,12 +9,10 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-class DataPoster {
+public class DataRetriever {
     private int numThreads;
     private int numIter;
     private String fileName;
@@ -32,7 +30,7 @@ class DataPoster {
     private static final int NUM_ATTEMPTS_FLAG = 1;
     private static final int NUM_SUCCESS_FLAG = 2;
 
-    DataPoster(String[] args) {
+    DataRetriever(String[] args) {
         String uri;
         if (args.length >= 2) {
             numThreads = Integer.valueOf(args[0]);
@@ -54,7 +52,7 @@ class DataPoster {
         }
     }
 
-    void postAll() throws InterruptedException, ExecutionException{
+    void getAll() {
         File file = new File(fileName);
         if(!file.isAbsolute()) {
             file = file.getAbsoluteFile();
@@ -68,20 +66,10 @@ class DataPoster {
 
         ExecutorService executor = Executors.newFixedThreadPool(numThreads + 1);
 
-        List<PostTask> postThreadList = new ArrayList<>();
+        List<UserStat> getThreadList = new ArrayList<>();
         for (int i = 0; i < numThreads; i++) {
-            postThreadList.add(new PostTask(i, numThreads, liftDataIn, client));
-        }
 
-        long start = System.currentTimeMillis();
-        System.out.println("Client starting.....Time: " + start);
-        System.out.println("Posting lift data...");
-        List<Future<List<PostResult>>> futurePostList = executor.invokeAll(postThreadList);
-        long stop = System.currentTimeMillis();
-        System.out.println("Posting lift data complete. Time: " + stop);
-        executor.shutdown();
-        client.close();
-        outputResults(futurePostList, start, stop);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -102,22 +90,5 @@ class DataPoster {
             cnfe.printStackTrace();
         }
         return result;
-    }
-
-    private void outputResults(List<Future<List<PostResult>>> futurePostList, long start, long stop) throws ExecutionException, InterruptedException {
-        StatsCalculator statCalc = new StatsCalculator();
-        long numAttempt = statCalc.calculateCount(futurePostList, NUM_ATTEMPTS_FLAG);
-        long numSuccess = statCalc.calculateCount(futurePostList, NUM_SUCCESS_FLAG);
-        String numerator = String.valueOf(stop - start);
-        double wallTime = (Double.valueOf(numerator)) / 1000;
-        System.out.println("Wall time: " + wallTime + " seconds");
-        List<Long> latencies = statCalc.calculateLatencies(futurePostList);
-        System.out.println("Number of post requests sent to server: " + numAttempt);
-        System.out.println("Number of successful post requests: " + numSuccess);
-        System.out.println("Mean latency: " + statCalc.calculateMeanLatency(latencies) + "ms");
-        System.out.println("Median latency: " + statCalc.calculateNthPercentile(latencies, 0.5) + " ms");
-        System.out.println("95th percentile: " + statCalc.calculateNthPercentile(latencies, .95) + " ms");
-        System.out.println("99th percentile: " + statCalc.calculateNthPercentile(latencies, .99) + " ms");
-
     }
 }

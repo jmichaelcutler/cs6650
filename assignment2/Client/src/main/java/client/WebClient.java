@@ -7,7 +7,7 @@ package client;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.*;
 
 
 /**
@@ -31,9 +31,9 @@ public class WebClient extends MainClient {
         webTarget = client.target(uri).path(endpoint);
     }
 
-    <T> T postData(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+    <T> T load(Object requestEntity, Class<T> responseType) throws ClientErrorException {
         return webTarget.request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON), responseType);
+                .post(Entity.entity(requestEntity,MediaType.APPLICATION_JSON), responseType);
     }
 
     String getStatus() throws ClientErrorException {

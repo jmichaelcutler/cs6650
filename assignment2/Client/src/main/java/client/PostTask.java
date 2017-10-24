@@ -7,7 +7,7 @@ package client;
 
 
 import bsdsass2testdata.RFIDLiftData;
-import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,13 +36,15 @@ public class PostTask extends MainClient implements Callable<List<PostResult>>{
         int endIndex = (liftData.size() / numThreads) * (blockNumber + 1);
         for(int request = startIndex; (request < liftData.size() && request < endIndex); request++) {
             RFIDLiftData singleRun = liftData.get(request);
-            Gson gson = new Gson();
-            String input = gson.toJson(singleRun);
             long start = System.currentTimeMillis();
-            Integer response = client.postData(input, Integer.class);
+            Integer response = client.load(singleRun, Integer.class);
             long stop = System.currentTimeMillis();
             PostResult postResult = new PostResult(start, stop - start, blockNumber, request, response == 200);
             results.add(postResult);
+        }
+        if(endIndex == liftData.size() - 1) {
+            RFIDLiftData endFlag = new RFIDLiftData(-1, -1, -1, -1, -1);
+            client.load(endFlag, Integer.class);
         }
         return results;
     }
