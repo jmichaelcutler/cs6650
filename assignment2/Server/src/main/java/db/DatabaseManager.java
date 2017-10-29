@@ -1,18 +1,26 @@
 package db;
 
 import bsdsass2testdata.RFIDLiftData;
-import com.mycompany.assignment2server.UserStat;
+import com.mycompany.mavenversion1.UserStat;
+
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface DatabaseManager {
-    static MongoDBManager createDBClient(){
-        return new MongoDBManager();
+    static MongoDBManager createDBClient(Integer day){
+        return new MongoDBManager(day);
     }
 
-    void postToDB(RFIDLiftData liftData);
+    Integer postBatchToDB(List<RFIDLiftData> liftData) throws InterruptedException, ExecutionException;
 
-    UserStat getFromDB(Integer skierId, Integer dayId);
+    UserStat getOneUserStats(Integer skierId, Integer dayId);
 
-    void delete(Integer dayId);
+    void postOneToDB(RFIDLiftData liftData);
 
-    void process(Integer dayId);
+    void close();
+
+    int dropDB(Integer day) throws InterruptedException;
+
+    void cacheUsers(Integer dayId) throws InterruptedException;
 }

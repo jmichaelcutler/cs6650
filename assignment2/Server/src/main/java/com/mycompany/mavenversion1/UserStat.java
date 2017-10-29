@@ -1,4 +1,4 @@
-package com.mycompany.assignment2server;
+package com.mycompany.mavenversion1;
 
 public class UserStat {
     private int skierId;
